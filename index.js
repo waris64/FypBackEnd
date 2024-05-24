@@ -10,7 +10,7 @@ dotenv.config();
 
 mongoose.connect(process.env.MONGO)
     .then(() => {
-        console.log('Mongo is connected');
+        console.log('Mongo   is connected');
     })
     .catch((error) => {
         console.log('Error while connecting DB', error);
@@ -29,6 +29,11 @@ app.listen(PORT, (error) => {
         console.log(`Server is running on port ${PORT}`);
     }
 });
+
+app.get("/", (req, res) => {
+    const data = { message: "Hello from the backend!" };
+    res.json(data);
+  });
 
 app.use('/api/auth', authRoutes);
 app.use('/api/records',recordRouter)
