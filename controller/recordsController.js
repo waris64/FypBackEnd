@@ -4,7 +4,6 @@ import { ErrorHandler } from '../utils/error.js';
 export const diseaseDetails = async (req, res) => {
     try {
         const { user_id,diseasePrediction,diseaseConfidence } = req.body;
-        console.log(req.body)
         // Check if image and diseaseName are provided
         if ( !user_id || !diseasePrediction || !diseaseConfidence) {
             return res.status(400).json({
