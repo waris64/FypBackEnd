@@ -2,6 +2,7 @@ import recordsModel from '../model/recordsModel.js';
 import { ErrorHandler } from '../utils/error.js';
 
 export const diseaseDetails = async (req, res) => {
+    console.log(req.body, "req from post api ");
     try {
         const { user_id,diseasePrediction,diseaseConfidence } = req.body;
         // Check if image and diseaseName are provided
@@ -24,12 +25,16 @@ export const diseaseDetails = async (req, res) => {
         return res.status(201).json({
             success: true,
             message: "Record saved successfully",
+// controller to yeh ha apka to python ki api sirf chala rhy ho?
+// g conroller ka kam sirf itna ha ky data ko send kry db main api ki out put ko save kry udhr . 
+//  wait
             data: savedRecord
         });
     } catch (error) {
        return res.status(500).json({
             message: error.message
         })
+
     }
 };
 

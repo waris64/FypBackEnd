@@ -21,7 +21,7 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors());
-const PORT = 3000;
+const PORT = 8080 || 8081;
 
 app.listen(PORT, (error) => {
   if (error) {
