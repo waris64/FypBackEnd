@@ -6,6 +6,7 @@ import recordRouter from "./route/router.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import userModel from "./model/userModel.js";
+import { register } from "./controller/authController.js";
 dotenv.config();
 
 mongoose
@@ -21,7 +22,7 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors());
-const PORT = 8080 || 8081;
+const PORT = 8080 ;
 
 app.listen(PORT, (error) => {
   if (error) {
@@ -38,11 +39,12 @@ app.get("/", (req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/records", recordRouter);
+app.use("/api/register",register);
 
-app.post("register", (req, res) => {
+app.post("/api/register", (req, res) => {
   userModel
     .create(req.body)
-    .then((signUp) => res.json(signUp))
+    .then((register) => res.json(register))
     .catch((err) => err.json(err));
 });
 app.use((err, req, res, next) => {
