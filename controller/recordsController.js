@@ -25,9 +25,6 @@ export const diseaseDetails = async (req, res) => {
         return res.status(201).json({
             success: true,
             message: "Record saved successfully",
-// controller to yeh ha apka to python ki api sirf chala rhy ho?
-// g conroller ka kam sirf itna ha ky data ko send kry db main api ki out put ko save kry udhr . 
-//  wait
             data: savedRecord
         });
     } catch (error) {

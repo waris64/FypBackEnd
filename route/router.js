@@ -13,5 +13,4 @@ router.post("/savedata", diseaseDetails);
 router.get("/fetchdata", fetchUserData);
 router.get("/getuserdata/:id", fetchDiseaseData);
 
-
 export default router;
