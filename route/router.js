@@ -7,7 +7,7 @@ import {
   diseaseDetails,
   fetchDiseaseData,
 } from "../controller/recordsController.js";
-import { BASE_URL } from "../../FrontEnd/src/API.Config.js";
+import { BASE_URL_VERCEL } from "../../FrontEnd/src/API.Config.js";
 
 // Route to save a new record
 router.post("/savedata", diseaseDetails);
