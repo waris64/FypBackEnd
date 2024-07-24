@@ -20,11 +20,12 @@
 
         try {
             await newUser.save();
-            res.json("Sign Up successfully");
+            alert("Sign Up successfully");
         } catch (error) {
             if (error.code === 11000 && error.keyPattern && error.keyPattern.email) {
-                return next(ErrorHandler(400, "Email is Already registered"));
+                return (ErrorHandler(400, "Email is Already registered"));
             } else if (error.code === 11000 && error.keyPattern && error.keyPattern.username) {
+                alert("from the authController file",error.code)
                 return next(ErrorHandler(400, "Username is Already taken"));
             }
             next(error);

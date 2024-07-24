@@ -37,7 +37,7 @@ app.get("/", (req, res) => {
   res.json(data);
 });
 
-app.use("/api/auth", authRoutes);
+app.use("/auth", authRoutes);
 app.use("/api/records", recordRouter);
 app.use("/api/register",register);
 
