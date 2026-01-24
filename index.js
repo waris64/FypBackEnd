@@ -91,19 +91,29 @@ app.get("/", (req, res) => {
 });
 
 app.get("/status", async (req, res) => {
-  const dbStatus = mongoose.connection.readyState;
-  const statusMap = {
-    0: "disconnected",
-    1: "connected",
-    2: "connecting",
-    3: "disconnecting"
-  };
-  
-  res.json({
-    database: statusMap[dbStatus] || "unknown",
-    readyState: dbStatus,
-    timestamp: new Date().toISOString()
-  });
+  try {
+    await connectToDatabase();
+    const dbStatus = mongoose.connection.readyState;
+    const statusMap = {
+      0: "disconnected",
+      1: "connected",
+      2: "connecting",
+      3: "disconnecting"
+    };
+    
+    res.json({
+      database: statusMap[dbStatus] || "unknown",
+      readyState: dbStatus,
+      timestamp: new Date().toISOString(),
+      mongoSet: !!process.env.MONGO
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined,
+      timestamp: new Date().toISOString()
+    });
+  }
 });
 
 // Middleware to ensure DB connection
