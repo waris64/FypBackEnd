@@ -14,12 +14,18 @@ dotenv.config();
 let cachedDb = null;
 
 async function connectToDatabase() {
-  if (cachedDb) {
+  if (cachedDb && mongoose.connection.readyState === 1) {
     console.log("Using cached database connection");
     return cachedDb;
   }
 
+  if (!process.env.MONGO) {
+    console.error("MONGO environment variable is missing");
+    throw new Error("MONGO environment variable is missing");
+  }
+
   try {
+    console.log("Attempting new database connection...");
     const connection = await mongoose.connect(process.env.MONGO, {
       serverSelectionTimeoutMS: 5000,
       socketTimeoutMS: 45000,
@@ -30,7 +36,8 @@ async function connectToDatabase() {
     return connection;
   } catch (error) {
     console.error("MongoDB connection error:", error);
-    throw error;
+    // Don't throw here to allow the app to start and respond with errors
+    return null;
   }
 }
 
@@ -62,22 +69,49 @@ app.use(cors({
 ));
 const PORT = process.env.PORT || 8080;
 
-connectToDatabase();
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, (error) => {
+    if (error) {
+      console.error("Error while starting the server:", error);
+    } else {
+      console.log(`Server is running on port ${PORT}`);
+    }
+  });
+}
 
-app.listen(PORT, (error) => {
-  if (error) {
-    console.error("Error while starting the server:", error);
-  } else {
-    console.log(`Server is running on port ${PORT}`);
-  }
-});
+export default app;
 // Health check 
 app.get("/", (req, res) => {
   res.json({
     message: "Hello from the backend!",
     status: "healthy",
+    timestamp: new Date().toISOString(),
+    env: process.env.NODE_ENV
+  });
+});
+
+app.get("/status", async (req, res) => {
+  const dbStatus = mongoose.connection.readyState;
+  const statusMap = {
+    0: "disconnected",
+    1: "connected",
+    2: "connecting",
+    3: "disconnecting"
+  };
+  
+  res.json({
+    database: statusMap[dbStatus] || "unknown",
+    readyState: dbStatus,
     timestamp: new Date().toISOString()
   });
+});
+
+// Middleware to ensure DB connection
+app.use(async (req, res, next) => {
+  if (mongoose.connection.readyState !== 1) {
+    await connectToDatabase();
+  }
+  next();
 });
 app.use("/auth", authRoutes);
 app.use("/api/records", recordRouter);
