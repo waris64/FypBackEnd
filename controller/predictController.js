@@ -23,10 +23,14 @@ export const predictDisease = async (req, res, next) => {
     });
 
   } catch (error) {
-    console.error("Prediction Error:", error);
+    console.error("--- Prediction API Error ---");
+    console.error("Message:", error.message);
+    console.error("Stack:", error.stack);
     if (error.response) {
-      console.error("Gradio Error Detail:", error.response);
+      console.error("Gradio Response Data:", error.response.data);
     }
-    next(ErrorHandler(500, error.message || "Model Prediction Failed"));
+    console.error("---------------------------");
+    
+    next(ErrorHandler(500, `Model Prediction Failed: ${error.message}`));
   }
 };

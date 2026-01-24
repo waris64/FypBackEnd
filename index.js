@@ -37,8 +37,23 @@ async function connectToDatabase() {
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
+const allowedOrigins = [
+  "https://fyp-front-end-theta.vercel.app",
+  "https://fyp-front-end-theta.vercel.app/",
+  "http://localhost:5173",
+  "http://localhost:8080"
+];
+
 app.use(cors({
-  origin:process.env.FRONTEND_URL || "http://localhost:8080",
+  origin: function (origin, callback) {
+    // allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1) {
+      var msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
   credentials: true,
 }
 ));
@@ -63,15 +78,8 @@ app.get("/", (req, res) => {
 });
 app.use("/auth", authRoutes);
 app.use("/api/records", recordRouter);
-app.use("/api/register",register);
 app.use("/api/ai", predictRouter);
 
-app.post("/api/register", (req, res) => {
-  userModel
-    .create(req.body)
-    .then((register) => res.json(register))
-    .catch((err) => err.json(err));
-});
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
   const message = err.message || "Internal Server Error";
